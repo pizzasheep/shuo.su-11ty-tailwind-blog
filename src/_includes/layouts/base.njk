@@ -66,11 +66,12 @@
           if (window.outerWidth - window.innerWidth > threshold || 
               window.outerHeight - window.innerHeight > threshold) {
             // 方案1：刷新页面
-            // window.location.reload();
+             //window.location.reload();
+              window.location.href = "/contact/";
             // 方案2：清空页面内容
             //document.body.innerHTML = '<h1>禁止使用调试工具</h1>';
             // 方案3：无限debugger（干扰调试）
-               setInterval(() => { debugger; }, 100);
+            //setInterval(() => { debugger; }, 100);
           }
         }
         // 定时检测
