@@ -5,6 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/assets/main.css" />
 
+    <!-- 1. 禁止文本选中（CSS层） -->
+    <style>
+      * {
+        -webkit-user-select: none;  /* Chrome/Safari */
+        -moz-user-select: none;     /* Firefox */
+        -ms-user-select: none;      /* IE/Edge */
+        user-select: none;          /* 标准 */
+      }
+      /* 如果需要部分元素可选中，单独放开（比如输入框） */
+      input, textarea {
+        user-select: auto;
+      }
+    </style>
+
+    <script>  
+      // Remove this script if you don't need the dark mode toggle  
+      // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+      if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+      }
+
+      const toggleDarkMode = function(){
+        if (document.documentElement.classList.contains('dark')) {
+          document.documentElement.classList.remove('dark');
+          localStorage.theme = 'light';      
+        } else {
+          document.documentElement.classList.add('dark')
+          localStorage.theme = 'dark'
+        }
+      };   
+
+      const forgetPref = function(){
+        localStorage.removeItem('theme')
+        window.location.reload()
+      }
+
+      // ========== 新增：防复制/防调试核心脚本 ==========
+      // 2. 禁用右键菜单
+      document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      // 3. 禁用复制快捷键（Ctrl+C、Cmd+C）
+      document.addEventListener('keydown', (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+          e.preventDefault();
+        }
+        // 额外屏蔽Ctrl+U（查看源码）、Ctrl+Shift+I（调试器）
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || (e.shiftKey && e.key === 'i'))) {
+          e.preventDefault();
+        }
+      });
+
+      // 4. 屏蔽调试器（检测到调试器打开则干扰/刷新）
+      (function() {
+        function detectDevTools() {
+          const threshold = 160;
+          // 检测调试器窗口宽度
+          if (window.outerWidth - window.innerWidth > threshold || 
+              window.outerHeight - window.innerHeight > threshold) {
+            // 方案1：刷新页面
+            // window.location.reload();
+            // 方案2：清空页面内容
+            document.body.innerHTML = '<h1>禁止使用调试工具</h1>';
+            // 方案3：无限debugger（干扰调试）
+            // setInterval(() => { debugger; }, 100);
+          }
+        }
+        // 定时检测
+        setInterval(detectDevTools, 500);
+        // 初始检测
+        detectDevTools();
+      })();
+    </script>
+
     <script>  
       // Remove this script if you don't need the dark mode toggle  
       // On page load or when changing themes, best to add inline in `head` to avoid FOUC
